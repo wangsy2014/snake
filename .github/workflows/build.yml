@@ -5,8 +5,12 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  # 允许手动触发
   workflow_dispatch:
+
+# 添加权限配置
+permissions:
+  contents: write
+  discussions: write
 
 jobs:
   build:
@@ -35,7 +39,6 @@ jobs:
         name: SnakeGame
         path: dist/SnakeGame.exe
         
-    # 如果想自动创建发布版本
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
@@ -47,4 +50,4 @@ jobs:
           Snake Game Release
           自动构建版本 v${{ github.run_number }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
