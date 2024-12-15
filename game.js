@@ -20,6 +20,7 @@ function game() {
         gameOver();
         return;
     }
+    
     checkFood();
     drawGame();
 }
