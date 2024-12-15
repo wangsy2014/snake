@@ -1,0 +1,51 @@
+name: Build Snake Game
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  # 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        pip install tkinter
+        
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --name="SnakeGame" --onefile --windowed snake_game.py
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: SnakeGame
+        path: dist/SnakeGame.exe
+        
+    # 如果想自动创建发布版本
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/SnakeGame.exe
+        name: Snake Game Release
+        tag_name: v${{ github.run_number }}
+        body: |
+          Snake Game Release
+          自动构建版本 v${{ github.run_number }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
